@@ -170,29 +170,23 @@ const MobileAgentMarket = ({ agents, onAgentClick }: MobileAgentMarketProps) => 
                         <div className="font-medium text-sm">
                           {agent.name}
                         </div>
-                        <div className="flex flex-col gap-1 text-xs text-muted-foreground">
-                          <div className="flex items-center gap-1">
-                            <Activity className="w-3 h-3" />
-                            <span>${(agent.volume / 1000).toFixed(1)}K USDC</span>
-                          </div>
-                          <div className="font-medium text-foreground">
-                            ${agent.portfolio.toLocaleString()} 
-                            <span className={cn("ml-1", getPnLColor(agent.pnl))}>
-                              {agent.pnl >= 0 ? '+' : ''}{agent.pnlPercent.toFixed(2)}%
-                            </span>
-                          </div>
+                        <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                          <Activity className="w-3 h-3" />
+                          <span>${(agent.volume / 1000).toFixed(1)}K USDC</span>
                         </div>
                       </div>
                     </div>
                   </div>
                   
                   <div className="flex items-center gap-2">
-                    <div className="text-right">
-                      <div className="text-xl font-bold">{agent.winRate}%</div>
-                      <div className={cn("text-xs flex items-center gap-1", getPnLColor(agent.pnl))}>
-                        <TrendingUp className="w-3 h-3" />
-                        {agent.pnl >= 0 ? '+' : ''}{agent.pnlPercent.toFixed(1)}%
+                    <div className="text-center">
+                      <div className="font-medium text-foreground text-sm">
+                        ${agent.portfolio.toLocaleString()} 
+                        <span className={cn("ml-1", getPnLColor(agent.pnl))}>
+                          {agent.pnl >= 0 ? '+' : ''}{agent.pnlPercent.toFixed(2)}%
+                        </span>
                       </div>
+                      <div className="text-xl font-bold">{agent.winRate}%</div>
                     </div>
                     {expandedAgent === agent.id ? 
                       <ChevronUp className="w-5 h-5 text-muted-foreground" /> : 
@@ -201,39 +195,21 @@ const MobileAgentMarket = ({ agents, onAgentClick }: MobileAgentMarketProps) => 
                   </div>
                 </div>
 
-                {/* Buy/Sell Buttons */}
-                <div className="space-y-2">
-                  <div className="flex gap-2">
-                    <Button 
-                      className="flex-1 bg-success hover:bg-success/90 text-success-foreground"
-                      onClick={() => handleBuyClick(agent, "yes")}
-                    >
-                      Buy Yes {getYesPrice(agent).toFixed(0)}¢
-                    </Button>
-                    <Button 
-                      variant="outline"
-                      className="flex-1 border-destructive text-destructive hover:bg-destructive/10"
-                      onClick={() => handleBuyClick(agent, "no")}
-                    >
-                      Buy No {getNoPrice(agent).toFixed(0)}¢
-                    </Button>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button 
-                      variant="outline"
-                      className="flex-1"
-                      onClick={() => handleSellClick(agent, "yes")}
-                    >
-                      Sell Yes
-                    </Button>
-                    <Button 
-                      variant="outline"
-                      className="flex-1"
-                      onClick={() => handleSellClick(agent, "no")}
-                    >
-                      Sell No
-                    </Button>
-                  </div>
+                {/* Buy Buttons */}
+                <div className="flex gap-2">
+                  <Button 
+                    className="flex-1 bg-success hover:bg-success/90 text-success-foreground"
+                    onClick={() => handleBuyClick(agent, "yes")}
+                  >
+                    Buy Yes {getYesPrice(agent).toFixed(0)}¢
+                  </Button>
+                  <Button 
+                    variant="outline"
+                    className="flex-1 border-destructive text-destructive hover:bg-destructive/10"
+                    onClick={() => handleBuyClick(agent, "no")}
+                  >
+                    Buy No {getNoPrice(agent).toFixed(0)}¢
+                  </Button>
                 </div>
 
                 {/* Expanded Content */}
