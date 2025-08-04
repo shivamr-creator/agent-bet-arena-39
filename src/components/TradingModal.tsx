@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { CalendarIcon } from "lucide-react";
@@ -77,297 +77,170 @@ const TradingModal = ({ isOpen, onClose, marketTitle, type, price, agentName }: 
         </DialogHeader>
         
         <div className="space-y-6">
-          <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "buy" | "sell")}>
-            <div className="flex items-center justify-between">
-              <TabsList className="grid w-32 grid-cols-2">
-                <TabsTrigger value="buy">Buy</TabsTrigger>
-                <TabsTrigger value="sell">Sell</TabsTrigger>
-              </TabsList>
-              <Select value={orderType} onValueChange={(value) => setOrderType(value as "market" | "limit")}>
-                <SelectTrigger className="w-24 h-8">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="market">Market</SelectItem>
-                  <SelectItem value="limit">Limit</SelectItem>
-                </SelectContent>
-              </Select>
+          <div className="flex items-center gap-4">
+            {/* Buy/Sell Dropdown */}
+            <Select value={activeTab} onValueChange={(value) => setActiveTab(value as "buy" | "sell")}>
+              <SelectTrigger className="w-24 bg-background border border-border">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="bg-background border border-border z-50">
+                <SelectItem value="buy">Buy</SelectItem>
+                <SelectItem value="sell">Sell</SelectItem>
+              </SelectContent>
+            </Select>
+            
+            {/* Market/Limit Dropdown */}
+            <Select value={orderType} onValueChange={(value) => setOrderType(value as "market" | "limit")}>
+              <SelectTrigger className="w-24 h-10 bg-background border border-border">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="bg-background border border-border z-50">
+                <SelectItem value="market">Market</SelectItem>
+                <SelectItem value="limit">Limit</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Yes/No Selection */}
+          <div className="grid grid-cols-2 gap-3">
+            <Button 
+              variant={selectedType === "yes" ? "default" : "outline"}
+              className={selectedType === "yes" ? "bg-success hover:bg-success/90 text-success-foreground" : "border-input"}
+              onClick={() => setSelectedType("yes")}
+            >
+              Yes {orderType === "limit" ? `${limitPrice}¢` : `${price.toFixed(0)}¢`}
+            </Button>
+            <Button 
+              variant={selectedType === "no" ? "destructive" : "outline"}
+              className={selectedType === "no" ? "bg-destructive hover:bg-destructive/90" : "border-input"}
+              onClick={() => setSelectedType("no")}
+            >
+              No {orderType === "limit" ? `${100 - parseInt(limitPrice)}¢` : `${(100 - price).toFixed(0)}¢`}
+            </Button>
+          </div>
+
+          {/* Limit Price Section */}
+          {orderType === "limit" && (
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="limitPrice">Limit Price</Label>
+                <div className="flex items-center gap-2">
+                  <Button variant="outline" size="sm" onClick={() => setLimitPrice((prev) => Math.max(1, parseInt(prev) - 1).toString())}>
+                    -
+                  </Button>
+                  <div className="relative flex-1">
+                    <Input
+                      id="limitPrice"
+                      value={limitPrice}
+                      onChange={(e) => setLimitPrice(e.target.value)}
+                      className="text-center text-lg font-semibold"
+                      placeholder="0"
+                    />
+                    <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">¢</span>
+                  </div>
+                  <Button variant="outline" size="sm" onClick={() => setLimitPrice((prev) => Math.min(99, parseInt(prev) + 1).toString())}>
+                    +
+                  </Button>
+                </div>
+              </div>
+              
+              <div>
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start"
+                  onClick={() => setShowExpiration(!showExpiration)}
+                >
+                  Set Expiration
+                </Button>
+                {showExpiration && (
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className="w-full justify-start text-left font-normal mt-2"
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {expirationDate ? format(expirationDate, "PPP") : "Pick a date"}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0 bg-background border border-border z-50" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={expirationDate}
+                        onSelect={setExpirationDate}
+                        initialFocus
+                        className={cn("p-3 pointer-events-auto")}
+                      />
+                      <div className="p-3 border-t">
+                        <Label htmlFor="time">Time</Label>
+                        <Input
+                          id="time"
+                          type="time"
+                          value={expirationTime}
+                          onChange={(e) => setExpirationTime(e.target.value)}
+                          className="mt-1"
+                        />
+                        <Button className="w-full mt-2" onClick={() => setShowExpiration(false)}>
+                          Apply
+                        </Button>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                )}
+              </div>
             </div>
+          )}
+          
+          {/* Shares Input */}
+          <div>
+            <Label htmlFor="shares">Shares</Label>
+            <Input
+              id="shares"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              className="text-lg font-semibold text-center"
+              placeholder="0"
+            />
+            {activeTab === "buy" && <div className="text-xs text-success mt-1">70.00 matching</div>}
+          </div>
 
-            <TabsContent value="buy" className="space-y-4">
-              <div className="grid grid-cols-2 gap-3">
-                <Button 
-                  variant={selectedType === "yes" ? "default" : "outline"}
-                  className={selectedType === "yes" ? "bg-success hover:bg-success/90 text-success-foreground" : "border-input"}
-                  onClick={() => setSelectedType("yes")}
-                >
-                  Yes {orderType === "limit" ? `${limitPrice}¢` : `${price.toFixed(0)}¢`}
-                </Button>
-                <Button 
-                  variant={selectedType === "no" ? "destructive" : "outline"}
-                  className={selectedType === "no" ? "bg-destructive hover:bg-destructive/90" : "border-input"}
-                  onClick={() => setSelectedType("no")}
-                >
-                  No {orderType === "limit" ? `${100 - parseInt(limitPrice)}¢` : `${(100 - price).toFixed(0)}¢`}
-                </Button>
+          {/* Percentage Buttons */}
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={() => setSharesPercentage(25)}>
+              25%
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => setSharesPercentage(50)}>
+              50%
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => setSharesPercentage(100)}>
+              Max
+            </Button>
+          </div>
+
+          {/* Summary Card */}
+          <Card className="bg-muted/50">
+            <CardContent className="p-4">
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-sm">You'll receive</span>
+                <span className="text-success font-semibold">▲</span>
               </div>
-
-              {orderType === "limit" && (
-                <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="limitPrice">Limit Price</Label>
-                    <div className="flex items-center gap-2">
-                      <Button variant="outline" size="sm" onClick={() => setLimitPrice((prev) => Math.max(1, parseInt(prev) - 1).toString())}>
-                        -
-                      </Button>
-                      <div className="relative flex-1">
-                        <Input
-                          id="limitPrice"
-                          value={limitPrice}
-                          onChange={(e) => setLimitPrice(e.target.value)}
-                          className="text-center text-lg font-semibold"
-                          placeholder="0"
-                        />
-                        <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">¢</span>
-                      </div>
-                      <Button variant="outline" size="sm" onClick={() => setLimitPrice((prev) => Math.min(99, parseInt(prev) + 1).toString())}>
-                        +
-                      </Button>
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <Button 
-                      variant="outline" 
-                      className="w-full justify-start"
-                      onClick={() => setShowExpiration(!showExpiration)}
-                    >
-                      Set Expiration
-                    </Button>
-                    {showExpiration && (
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <Button
-                            variant="outline"
-                            className="w-full justify-start text-left font-normal mt-2"
-                          >
-                            <CalendarIcon className="mr-2 h-4 w-4" />
-                            {expirationDate ? format(expirationDate, "PPP") : "Pick a date"}
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
-                          <Calendar
-                            mode="single"
-                            selected={expirationDate}
-                            onSelect={setExpirationDate}
-                            initialFocus
-                            className={cn("p-3 pointer-events-auto")}
-                          />
-                          <div className="p-3 border-t">
-                            <Label htmlFor="time">Time</Label>
-                            <Input
-                              id="time"
-                              type="time"
-                              value={expirationTime}
-                              onChange={(e) => setExpirationTime(e.target.value)}
-                              className="mt-1"
-                            />
-                            <Button className="w-full mt-2" onClick={() => setShowExpiration(false)}>
-                              Apply
-                            </Button>
-                          </div>
-                        </PopoverContent>
-                      </Popover>
-                    )}
-                  </div>
-                </div>
-              )}
-              
-              <div>
-                <Label htmlFor="shares">Shares</Label>
-                <Input
-                  id="shares"
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                  className="text-lg font-semibold text-center"
-                  placeholder="0"
-                />
-                <div className="text-xs text-success mt-1">70.00 matching</div>
+              <div className="text-2xl font-bold text-success">
+                ${activeTab === "buy" ? calculateReceiveAmount().toFixed(2) : getTotalCost().toFixed(2)}
               </div>
-
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm" onClick={() => setSharesPercentage(25)}>
-                  25%
-                </Button>
-                <Button variant="outline" size="sm" onClick={() => setSharesPercentage(50)}>
-                  50%
-                </Button>
-                <Button variant="outline" size="sm" onClick={() => setSharesPercentage(100)}>
-                  Max
-                </Button>
+              <div className="text-xs text-muted-foreground mt-1">
+                Avg. Price {orderType === "limit" ? limitPrice : price.toFixed(0)}¢ ⓘ
               </div>
+            </CardContent>
+          </Card>
 
-              <Card className="bg-muted/50">
-                <CardContent className="p-4">
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-sm">You'll receive</span>
-                    <span className="text-success font-semibold">▲</span>
-                  </div>
-                  <div className="text-2xl font-bold text-success">
-                    ${calculateReceiveAmount().toFixed(2)}
-                  </div>
-                  <div className="text-xs text-muted-foreground mt-1">
-                    Avg. Price {orderType === "limit" ? limitPrice : price.toFixed(0)}¢ ⓘ
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Button 
-                onClick={handleTrade}
-                className="w-full bg-primary hover:bg-primary/90"
-                size="lg"
-              >
-                Trade
-              </Button>
-            </TabsContent>
-
-            <TabsContent value="sell" className="space-y-4">
-              <div className="grid grid-cols-2 gap-3">
-                <Button 
-                  variant={selectedType === "yes" ? "default" : "outline"}
-                  className={selectedType === "yes" ? "bg-success hover:bg-success/90 text-success-foreground" : "border-input"}
-                  onClick={() => setSelectedType("yes")}
-                >
-                  Yes {orderType === "limit" ? `${limitPrice}¢` : `${price.toFixed(0)}¢`}
-                </Button>
-                <Button 
-                  variant={selectedType === "no" ? "destructive" : "outline"}
-                  className={selectedType === "no" ? "bg-destructive hover:bg-destructive/90" : "border-input"}
-                  onClick={() => setSelectedType("no")}
-                >
-                  No {orderType === "limit" ? `${100 - parseInt(limitPrice)}¢` : `${(100 - price).toFixed(0)}¢`}
-                </Button>
-              </div>
-
-              {orderType === "limit" && (
-                <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="limitPriceSell">Limit Price</Label>
-                    <div className="flex items-center gap-2">
-                      <Button variant="outline" size="sm" onClick={() => setLimitPrice((prev) => Math.max(1, parseInt(prev) - 1).toString())}>
-                        -
-                      </Button>
-                      <div className="relative flex-1">
-                        <Input
-                          id="limitPriceSell"
-                          value={limitPrice}
-                          onChange={(e) => setLimitPrice(e.target.value)}
-                          className="text-center text-lg font-semibold"
-                          placeholder="0"
-                        />
-                        <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">¢</span>
-                      </div>
-                      <Button variant="outline" size="sm" onClick={() => setLimitPrice((prev) => Math.min(99, parseInt(prev) + 1).toString())}>
-                        +
-                      </Button>
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <Button 
-                      variant="outline" 
-                      className="w-full justify-start"
-                      onClick={() => setShowExpiration(!showExpiration)}
-                    >
-                      Set Expiration
-                    </Button>
-                    {showExpiration && (
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <Button
-                            variant="outline"
-                            className="w-full justify-start text-left font-normal mt-2"
-                          >
-                            <CalendarIcon className="mr-2 h-4 w-4" />
-                            {expirationDate ? format(expirationDate, "PPP") : "Pick a date"}
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
-                          <Calendar
-                            mode="single"
-                            selected={expirationDate}
-                            onSelect={setExpirationDate}
-                            initialFocus
-                            className={cn("p-3 pointer-events-auto")}
-                          />
-                          <div className="p-3 border-t">
-                            <Label htmlFor="timeSell">Time</Label>
-                            <Input
-                              id="timeSell"
-                              type="time"
-                              value={expirationTime}
-                              onChange={(e) => setExpirationTime(e.target.value)}
-                              className="mt-1"
-                            />
-                            <Button className="w-full mt-2" onClick={() => setShowExpiration(false)}>
-                              Apply
-                            </Button>
-                          </div>
-                        </PopoverContent>
-                      </Popover>
-                    )}
-                  </div>
-                </div>
-              )}
-              
-              <div>
-                <Label htmlFor="sharesSell">Shares</Label>
-                <Input
-                  id="sharesSell"
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                  className="text-lg font-semibold text-center"
-                  placeholder="0"
-                />
-              </div>
-
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm" onClick={() => setSharesPercentage(25)}>
-                  25%
-                </Button>
-                <Button variant="outline" size="sm" onClick={() => setSharesPercentage(50)}>
-                  50%
-                </Button>
-                <Button variant="outline" size="sm" onClick={() => setSharesPercentage(100)}>
-                  Max
-                </Button>
-              </div>
-
-              <Card className="bg-muted/50">
-                <CardContent className="p-4">
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-sm">You'll receive</span>
-                    <span className="text-success font-semibold">▲</span>
-                  </div>
-                  <div className="text-2xl font-bold text-success">
-                    ${getTotalCost().toFixed(2)}
-                  </div>
-                  <div className="text-xs text-muted-foreground mt-1">
-                    Avg. Price {orderType === "limit" ? limitPrice : price.toFixed(0)}¢ ⓘ
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Button 
-                onClick={handleTrade}
-                className="w-full bg-primary hover:bg-primary/90"
-                size="lg"
-              >
-                Sell Order
-              </Button>
-            </TabsContent>
-          </Tabs>
-
+          {/* Trade Button */}
+          <Button 
+            onClick={handleTrade}
+            className="w-full bg-primary hover:bg-primary/90"
+            size="lg"
+          >
+            {activeTab === "buy" ? "Trade" : "Sell Order"}
+          </Button>
           <div className="text-xs text-muted-foreground text-center">
             By trading, you agree to the Terms of Use.
           </div>
