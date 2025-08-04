@@ -170,9 +170,17 @@ const MobileAgentMarket = ({ agents, onAgentClick }: MobileAgentMarketProps) => 
                         <div className="font-medium text-sm">
                           {agent.name}
                         </div>
-                        <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                          <Activity className="w-3 h-3" />
-                          <span>${(agent.volume / 1000).toFixed(1)}K USDC</span>
+                        <div className="flex flex-col gap-1 text-xs text-muted-foreground">
+                          <div className="flex items-center gap-1">
+                            <Activity className="w-3 h-3" />
+                            <span>${(agent.volume / 1000).toFixed(1)}K USDC</span>
+                          </div>
+                          <div className="font-medium text-foreground">
+                            ${agent.portfolio.toLocaleString()} 
+                            <span className={cn("ml-1", getPnLColor(agent.pnl))}>
+                              {agent.pnl >= 0 ? '+' : ''}{agent.pnlPercent.toFixed(2)}%
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -370,30 +378,33 @@ const MobileAgentMarket = ({ agents, onAgentClick }: MobileAgentMarketProps) => 
           <div className="space-y-6">
             {/* Amount Input */}
             <div className="text-center">
-              <div className="flex items-center justify-center gap-4 mb-4">
+              <div className="flex items-center justify-center gap-6 mb-6">
                 <Button 
                   variant="outline" 
-                  size="sm"
+                  size="lg"
                   onClick={() => setAmount(Math.max(0, amount - 1))}
-                  className="w-10 h-10 rounded-full"
+                  className="w-12 h-12 rounded-full text-xl"
+                  disabled={amount <= 0}
                 >
-                  -
+                  −
                 </Button>
-                <div className="text-4xl font-bold">${amount}</div>
+                <div className="text-6xl font-bold min-w-[200px]">${amount}</div>
                 <Button 
                   variant="outline" 
-                  size="sm"
+                  size="lg"
                   onClick={() => setAmount(amount + 1)}
-                  className="w-10 h-10 rounded-full"
+                  className="w-12 h-12 rounded-full text-xl"
                 >
                   +
                 </Button>
               </div>
 
               {amount > 0 && selectedAgent && (
-                <div className="text-success font-medium">
-                  To win 💰 ${getPotentialWin().toFixed(2)}
-                  <div className="text-xs text-muted-foreground">
+                <div className="mb-4">
+                  <div className="text-success text-xl font-semibold flex items-center justify-center gap-2">
+                    To win 💰 ${getPotentialWin().toFixed(2)}
+                  </div>
+                  <div className="text-sm text-muted-foreground mt-1">
                     Avg. Price {selectedOutcome === "yes" ? getYesPrice(selectedAgent).toFixed(0) : getNoPrice(selectedAgent).toFixed(0)}¢
                   </div>
                 </div>
@@ -401,23 +412,32 @@ const MobileAgentMarket = ({ agents, onAgentClick }: MobileAgentMarketProps) => 
             </div>
 
             {/* Quick Amount Buttons */}
-            <div className="flex gap-2 justify-center">
-              {[1, 20, 100].map((quickAmount) => (
-                <Button
-                  key={quickAmount}
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setAmount(amount + quickAmount)}
-                  className="px-4"
-                >
-                  +${quickAmount}
-                </Button>
-              ))}
+            <div className="grid grid-cols-4 gap-3 mb-6">
               <Button
                 variant="outline"
-                size="sm"
+                onClick={() => setAmount(amount + 1)}
+                className="h-11 text-sm font-medium"
+              >
+                +$1
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => setAmount(amount + 20)}
+                className="h-11 text-sm font-medium"
+              >
+                +$20
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => setAmount(amount + 100)}
+                className="h-11 text-sm font-medium"
+              >
+                +$100
+              </Button>
+              <Button
+                variant="outline"
                 onClick={() => setAmount(1000)}
-                className="px-4"
+                className="h-11 text-sm font-medium"
               >
                 Max
               </Button>
