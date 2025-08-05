@@ -355,8 +355,8 @@ const MobileAgentMarket = ({ agents, onAgentClick }: MobileAgentMarketProps) => 
           <div className="space-y-6">
             {/* Buy/Sell Dropdown */}
             <div className="flex items-center justify-between">
-              <Select value="buy" onValueChange={(value) => console.log(value)}>
-                <SelectTrigger className="w-20 bg-background border border-border">
+              <Select value="sell" onValueChange={(value) => console.log(value)}>
+                <SelectTrigger className="w-16 h-10 bg-transparent border-none text-muted-foreground">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="bg-card border border-border shadow-lg z-[9999]">
@@ -365,15 +365,7 @@ const MobileAgentMarket = ({ agents, onAgentClick }: MobileAgentMarketProps) => 
                 </SelectContent>
               </Select>
               
-              <Select value="market" onValueChange={(value) => console.log(value)}>
-                <SelectTrigger className="w-24 h-10 bg-background border border-border">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="bg-card border border-border shadow-lg z-[9999]">
-                  <SelectItem value="market">Market</SelectItem>
-                  <SelectItem value="limit">Limit</SelectItem>
-                </SelectContent>
-              </Select>
+              <span className="text-muted-foreground text-sm">Market</span>
             </div>
 
             {/* Amount Input */}
