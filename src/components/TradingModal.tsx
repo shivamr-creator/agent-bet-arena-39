@@ -76,11 +76,11 @@ const TradingModal = ({ isOpen, onClose, marketTitle, type, price, agentName }: 
           </DialogTitle>
         </DialogHeader>
         
-        {/* Dropdowns at the top */}
-        <div className="flex items-center gap-4 mb-6">
+        {/* Single Buy/Sell Dropdown and Market/Limit */}
+        <div className="flex items-center justify-between mb-6">
           {/* Buy/Sell Dropdown */}
           <Select value={activeTab} onValueChange={(value) => setActiveTab(value as "buy" | "sell")}>
-            <SelectTrigger className="w-24 bg-background border border-border">
+            <SelectTrigger className="w-20 bg-background border border-border">
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="bg-card border border-border shadow-lg z-[9999]">
@@ -89,7 +89,7 @@ const TradingModal = ({ isOpen, onClose, marketTitle, type, price, agentName }: 
             </SelectContent>
           </Select>
           
-          {/* Market/Limit Dropdown */}
+          {/* Market/Limit on the right */}
           <Select value={orderType} onValueChange={(value) => setOrderType(value as "market" | "limit")}>
             <SelectTrigger className="w-24 h-10 bg-background border border-border">
               <SelectValue />
