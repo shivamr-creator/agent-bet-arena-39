@@ -83,7 +83,7 @@ const TradingModal = ({ isOpen, onClose, marketTitle, type, price, agentName }: 
               <SelectTrigger className="w-24 bg-background border border-border">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="bg-background border border-border z-50">
+              <SelectContent className="bg-card border border-border shadow-lg z-[9999]">
                 <SelectItem value="buy">Buy</SelectItem>
                 <SelectItem value="sell">Sell</SelectItem>
               </SelectContent>
@@ -94,7 +94,7 @@ const TradingModal = ({ isOpen, onClose, marketTitle, type, price, agentName }: 
               <SelectTrigger className="w-24 h-10 bg-background border border-border">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="bg-background border border-border z-50">
+              <SelectContent className="bg-card border border-border shadow-lg z-[9999]">
                 <SelectItem value="market">Market</SelectItem>
                 <SelectItem value="limit">Limit</SelectItem>
               </SelectContent>
