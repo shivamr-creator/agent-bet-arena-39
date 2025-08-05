@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
   LineChart, 
   Line, 
@@ -352,6 +353,29 @@ const MobileAgentMarket = ({ agents, onAgentClick }: MobileAgentMarketProps) => 
           </SheetHeader>
 
           <div className="space-y-6">
+            {/* Buy/Sell Dropdown */}
+            <div className="flex items-center justify-between">
+              <Select value="buy" onValueChange={(value) => console.log(value)}>
+                <SelectTrigger className="w-20 bg-background border border-border">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-card border border-border shadow-lg z-[9999]">
+                  <SelectItem value="buy">Buy</SelectItem>
+                  <SelectItem value="sell">Sell</SelectItem>
+                </SelectContent>
+              </Select>
+              
+              <Select value="market" onValueChange={(value) => console.log(value)}>
+                <SelectTrigger className="w-24 h-10 bg-background border border-border">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-card border border-border shadow-lg z-[9999]">
+                  <SelectItem value="market">Market</SelectItem>
+                  <SelectItem value="limit">Limit</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
             {/* Amount Input */}
             <div className="text-center">
               <div className="flex items-center justify-center gap-6 mb-6">
