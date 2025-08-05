@@ -76,30 +76,32 @@ const TradingModal = ({ isOpen, onClose, marketTitle, type, price, agentName }: 
           </DialogTitle>
         </DialogHeader>
         
+        {/* Dropdowns at the top */}
+        <div className="flex items-center gap-4 mb-6">
+          {/* Buy/Sell Dropdown */}
+          <Select value={activeTab} onValueChange={(value) => setActiveTab(value as "buy" | "sell")}>
+            <SelectTrigger className="w-24 bg-background border border-border">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent className="bg-card border border-border shadow-lg z-[9999]">
+              <SelectItem value="buy">Buy</SelectItem>
+              <SelectItem value="sell">Sell</SelectItem>
+            </SelectContent>
+          </Select>
+          
+          {/* Market/Limit Dropdown */}
+          <Select value={orderType} onValueChange={(value) => setOrderType(value as "market" | "limit")}>
+            <SelectTrigger className="w-24 h-10 bg-background border border-border">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent className="bg-card border border-border shadow-lg z-[9999]">
+              <SelectItem value="market">Market</SelectItem>
+              <SelectItem value="limit">Limit</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        
         <div className="space-y-6">
-          <div className="flex items-center gap-4">
-            {/* Buy/Sell Dropdown */}
-            <Select value={activeTab} onValueChange={(value) => setActiveTab(value as "buy" | "sell")}>
-              <SelectTrigger className="w-24 bg-background border border-border">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="bg-card border border-border shadow-lg z-[9999]">
-                <SelectItem value="buy">Buy</SelectItem>
-                <SelectItem value="sell">Sell</SelectItem>
-              </SelectContent>
-            </Select>
-            
-            {/* Market/Limit Dropdown */}
-            <Select value={orderType} onValueChange={(value) => setOrderType(value as "market" | "limit")}>
-              <SelectTrigger className="w-24 h-10 bg-background border border-border">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="bg-card border border-border shadow-lg z-[9999]">
-                <SelectItem value="market">Market</SelectItem>
-                <SelectItem value="limit">Limit</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
 
           {/* Yes/No Selection */}
           <div className="grid grid-cols-2 gap-3">
